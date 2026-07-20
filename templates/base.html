@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}نظام التشخيص الأولي للأمراض الجلدية{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <span class="logo">🩺</span> نظام التشخيص الجلدي الذكي
+        </div>
+        <div class="navbar-links">
+            {% if current_user.is_authenticated %}
+                {% if current_user.is_doctor %}
+                    <a href="{{ url_for('doctor_dashboard') }}">لوحة التحكم</a>
+                    <a href="{{ url_for('doctor_patients') }}">المرضى</a>
+                    <a href="{{ url_for('doctor_logs') }}">سجل الحركات</a>
+                {% else %}
+                    <a href="{{ url_for('patient_dashboard') }}">الرئيسية</a>
+                    <a href="{{ url_for('diagnose') }}">تشخيص حالة جديدة</a>
+                {% endif %}
+                <span class="user-chip">{{ current_user.full_name }} ({{ 'طبيب' if current_user.is_doctor else 'مريض' }})</span>
+                <a href="{{ url_for('logout') }}" class="btn-link">تسجيل الخروج</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">تسجيل الدخول</a>
+                <a href="{{ url_for('register') }}">حساب جديد</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        نظام ويب ذكي لدعم التشخيص الأولي للأمراض الجلدية باستخدام ResNet50 و Transfer Learning
+        <br><small>هذا تشخيص أولي مبدئي ولا يغني عن استشارة الطبيب المختص</small>
+    </footer>
+</body>
+</html>

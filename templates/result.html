@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}نتائج التشخيص{% endblock %}
+{% block content %}
+<div class="result-page">
+    <div class="result-image-col">
+        <img src="{{ url_for('static', filename=prediction.image_path) }}" alt="صورة الحالة">
+        <p><strong>المريض:</strong> {{ prediction.patient.name }}</p>
+        <p><strong>العمر:</strong> {{ prediction.patient.age or '—' }}</p>
+        <p><strong>رقم الهاتف:</strong> {{ prediction.patient.phone or '—' }}</p>
+        <p><strong>تاريخ الفحص:</strong> {{ prediction.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+    </div>
+
+    <div class="result-details-col">
+        <h2>التشخيص الأولي</h2>
+        <div class="main-diagnosis">
+            <span class="diagnosis-name">{{ prediction.diagnosis }}</span>
+            <span class="confidence-badge large">{{ "%.1f"|format(prediction.confidence) }}%</span>
+        </div>
+
+        <h3>جميع الاحتمالات (مرتبة حسب نسبة الثقة)</h3>
+        <div class="probability-list">
+            {% for label, prob in all_probs.items() %}
+            <div class="probability-row">
+                <span>{{ label }}</span>
+                <div class="prob-bar-bg">
+                    <div class="prob-bar-fill" style="width: {{ prob }}%;"></div>
+                </div>
+                <span>{{ prob }}%</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if current_user.is_doctor %}
+        <h3>ملاحظات الطبيب</h3>
+        <form method="POST" action="{{ url_for('add_doctor_note', prediction_id=prediction.id) }}">
+            <textarea name="notes" rows="4">{{ prediction.doctor_notes or '' }}</textarea>
+            <button type="submit" class="btn btn-primary">حفظ الملاحظات وتأكيد المراجعة</button>
+        </form>
+        {% elif prediction.doctor_notes %}
+        <h3>ملاحظات الطبيب</h3>
+        <p class="doctor-note-box">{{ prediction.doctor_notes }}</p>
+        {% endif %}
+
+        <p class="disclaimer">⚠️ هذا تشخيص أولي مبدئي بالاعتماد على الذكاء الاصطناعي، ولا يغني إطلاقاً عن استشارة طبيب مختص.</p>
+    </div>
+</div>
+{% endblock %}

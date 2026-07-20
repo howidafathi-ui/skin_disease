@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}تشخيص حالة جديدة{% endblock %}
+{% block content %}
+<div class="diagnose-card">
+    <h2>تشخيص حالة جلدية جديدة</h2>
+    <p class="hint">قم بتحميل صورة واضحة للمنطقة المصابة، وسيقوم النظام بتحليلها وتقديم تشخيص أولي خلال ثوانٍ.</p>
+
+    <form method="POST" enctype="multipart/form-data" id="diagnose-form">
+        <label>صورة الحالة الجلدية</label>
+        <input type="file" name="image" id="image-input" accept=".png,.jpg,.jpeg" required>
+
+        <img id="preview" class="image-preview" style="display:none;">
+
+        <label>ملاحظات إضافية (اختياري)</label>
+        <textarea name="notes" rows="3" placeholder="مثال: الحكة، مدة الإصابة، الألم..."></textarea>
+
+        <button type="submit" class="btn btn-primary" id="submit-btn">تحليل الصورة</button>
+    </form>
+</div>
+
+<script>
+    const input = document.getElementById('image-input');
+    const preview = document.getElementById('preview');
+    const form = document.getElementById('diagnose-form');
+    const submitBtn = document.getElementById('submit-btn');
+
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
+    });
+
+    form.addEventListener('submit', () => {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'جاري التحليل... يرجى الانتظار';
+    });
+</script>
+{% endblock %}

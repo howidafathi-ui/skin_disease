@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}إنشاء حساب جديد{% endblock %}
+{% block content %}
+<div class="auth-card">
+    <h2>إنشاء حساب جديد</h2>
+    <form method="POST">
+        <label>نوع الحساب</label>
+        <select name="role" id="role-select">
+            <option value="patient">مريض</option>
+            <option value="doctor">طبيب</option>
+        </select>
+
+        <label>الاسم الكامل</label>
+        <input type="text" name="full_name" required>
+
+        <label>اسم المستخدم</label>
+        <input type="text" name="username" required>
+
+        <label>كلمة المرور</label>
+        <input type="password" name="password" required>
+
+        <label>رقم الهاتف</label>
+        <input type="text" name="phone">
+
+        <div id="age-field">
+            <label>العمر</label>
+            <input type="number" name="age" min="0" max="120">
+        </div>
+
+        <button type="submit" class="btn btn-primary">إنشاء الحساب</button>
+    </form>
+    <p class="auth-switch">لديك حساب بالفعل؟ <a href="{{ url_for('login') }}">تسجيل الدخول</a></p>
+</div>
+
+<script>
+    const roleSelect = document.getElementById('role-select');
+    const ageField = document.getElementById('age-field');
+    roleSelect.addEventListener('change', () => {
+        ageField.style.display = roleSelect.value === 'patient' ? 'block' : 'none';
+    });
+</script>
+{% endblock %}

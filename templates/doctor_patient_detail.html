@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}تفاصيل المريض{% endblock %}
+{% block content %}
+<h2>ملف المريض: {{ patient.name }}</h2>
+
+<div class="patient-info-box">
+    <p><strong>العمر:</strong> {{ patient.age or '—' }}</p>
+    <p><strong>رقم الهاتف:</strong> {{ patient.phone or '—' }}</p>
+    <p><strong>تاريخ التسجيل:</strong> {{ patient.created_at.strftime('%Y-%m-%d') }}</p>
+</div>
+
+<h3>سجل الحالات التشخيصية</h3>
+{% if patient.predictions %}
+<div class="cards-grid">
+    {% for pred in patient.predictions %}
+    <a href="{{ url_for('prediction_result', prediction_id=pred.id) }}" class="case-card">
+        <img src="{{ url_for('static', filename=pred.image_path) }}" alt="صورة الحالة">
+        <div class="case-card-body">
+            <strong>{{ pred.diagnosis }}</strong>
+            <span class="confidence-badge">{{ "%.1f"|format(pred.confidence) }}%</span>
+            <small>{{ pred.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<p class="empty-state">لا توجد حالات مسجلة لهذا المريض بعد.</p>
+{% endif %}
+{% endblock %}

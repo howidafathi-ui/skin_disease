@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}لوحة تحكم الطبيب{% endblock %}
+{% block content %}
+<h2>لوحة تحكم الطبيب</h2>
+
+<div class="stats-row">
+    <div class="stat-box">
+        <span class="stat-number">{{ total_patients }}</span>
+        <span class="stat-label">إجمالي المرضى</span>
+    </div>
+    <div class="stat-box">
+        <span class="stat-number">{{ total_cases }}</span>
+        <span class="stat-label">إجمالي الحالات المشخّصة</span>
+    </div>
+    <div class="stat-box highlight">
+        <span class="stat-number">{{ pending_review }}</span>
+        <span class="stat-label">بانتظار المراجعة</span>
+    </div>
+</div>
+
+<h3>أحدث الحالات</h3>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>الصورة</th>
+            <th>المريض</th>
+            <th>التشخيص الأولي</th>
+            <th>نسبة الثقة</th>
+            <th>التاريخ</th>
+            <th>الحالة</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for case in recent_cases %}
+        <tr onclick="window.location='{{ url_for('prediction_result', prediction_id=case.id) }}'">
+            <td><img class="thumb" src="{{ url_for('static', filename=case.image_path) }}"></td>
+            <td>{{ case.patient.name }}</td>
+            <td>{{ case.diagnosis }}</td>
+            <td>{{ "%.1f"|format(case.confidence) }}%</td>
+            <td>{{ case.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>
+                {% if case.reviewed_by_doctor %}
+                    <span class="tag tag-success">تمت المراجعة</span>
+                {% else %}
+                    <span class="tag tag-pending">قيد الانتظار</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6">لا توجد حالات مسجّلة بعد</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

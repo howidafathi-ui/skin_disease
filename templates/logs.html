@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}سجل حركات المستخدمين{% endblock %}
+{% block content %}
+<h2>سجل حركات المستخدمين (Audit Log)</h2>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>المستخدم</th>
+            <th>نوع الحركة</th>
+            <th>الشاشة</th>
+            <th>الوصف</th>
+            <th>التاريخ والوقت</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.user.full_name }}</td>
+            <td>{{ log.action_type }}</td>
+            <td>{{ log.screen_name }}</td>
+            <td>{{ log.description }}</td>
+            <td>{{ log.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5">لا توجد حركات مسجلة</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

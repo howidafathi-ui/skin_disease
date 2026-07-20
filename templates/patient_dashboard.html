@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}لوحة المريض{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>مرحباً، {{ current_user.full_name }} 👋</h2>
+    <a href="{{ url_for('diagnose') }}" class="btn btn-primary">+ تشخيص حالة جديدة</a>
+</div>
+
+<h3>سجل الحالات السابقة</h3>
+
+{% if history %}
+<div class="cards-grid">
+    {% for pred in history %}
+    <a href="{{ url_for('prediction_result', prediction_id=pred.id) }}" class="case-card">
+        <img src="{{ url_for('static', filename=pred.image_path) }}" alt="صورة الحالة">
+        <div class="case-card-body">
+            <strong>{{ pred.diagnosis }}</strong>
+            <span class="confidence-badge">{{ "%.1f"|format(pred.confidence) }}%</span>
+            <small>{{ pred.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+            {% if pred.reviewed_by_doctor %}
+                <span class="tag tag-success">تمت مراجعة الطبيب</span>
+            {% else %}
+                <span class="tag tag-pending">بانتظار المراجعة</span>
+            {% endif %}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<p class="empty-state">لا توجد حالات مسجّلة بعد. ابدأ بتشخيص حالتك الأولى.</p>
+{% endif %}
+{% endblock %}
